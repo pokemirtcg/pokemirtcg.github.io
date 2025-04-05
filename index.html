@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Card Grader Tool</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="icono-PCG.png">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header con banderas e info -->
+        <div class="top-bar">
+            <button id="info-btn" class="info-btn">ⓘ</button>
+            <div class="flags">
+                <button class="flag" data-lang="es"><img src="flags/es.png" alt="Español"></button>
+                <button class="flag" data-lang="en"><img src="flags/en.png" alt="English"></button>
+                <button class="flag" data-lang="fr"><img src="flags/fr.png" alt="Français"></button>
+                <button class="flag" data-lang="it"><img src="flags/it.png" alt="Italiano"></button>
+                <button class="flag" data-lang="de"><img src="flags/de.png" alt="Deutsch"></button>
+            </div>
+        </div>
+
+        <!-- Título -->
+        <h1 id="title">POKÉMON CARD GRADER TOOL</h1>
+
+        <!-- Contenido principal -->
+        <div class="content">
+            <!-- Panel izquierdo: Canvas -->
+            <div class="left-panel">
+                <div class="canvas-container">
+                    <canvas id="canvas" width="500" height="700"></canvas> <!-- Canvas más pequeño -->
+                </div>
+                <button id="load-btn" class="load-btn">Cargar Imagen</button>
+                <input type="file" id="file-input" accept="image/*" style="display: none;">
+            </div>
+
+            <!-- Panel derecho: Resultados -->
+            <div class="right-panel">
+                <h2 id="results-title">Resultados</h2>
+                <div class="results-container">
+                    <pre id="results-text"></pre>
+                </div>
+                <button id="download-btn" class="download-btn">Descargar Resultados</button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 <a href="https://www.tiktok.com/@pokemir.tcg">@pokemir.tcg</a>. All rights reserved.</p>
+          </footer>
+
+        <!-- Ventana modal de información -->
+        <div id="info-modal" class="modal">
+            <div class="modal-content">
+                <span id="modal-close" class="close">×</span>
+                <h2 id="info-title">Información</h2>
+                <p id="info-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Traducciones
+        const translations = {
+            "es": {
+                "title": "Pokémon Card Grader Tool", "load": "Cargar Imagen", "results": "Resultados",
+                "left": "Izquierda", "right": "Derecha", "top": "Superior", "bottom": "Inferior",
+                "h_symmetry": "Simetría Horizontal", "v_symmetry": "Simetría Vertical", "grade": "Grado PSA Estimado",
+                "info_title": "Información",
+                "info": "Esta aplicación evalúa el centrado de cartas Pokémon para estimar su grado PSA.\n\n1. Carga una imagen usando el botón 'Cargar Imagen'.\n2. Ajusta los cursores rojos y azules para marcar los bordes de la ilustración.\n3. Ajusta los cursores negros para definir el recuadro de la carta.\n4. Los resultados muestran los porcentajes de centrado y el grado PSA estimado.",
+                "warning_title": "Advertencia", "warning_message": "Primero carga una imagen y ajusta los cursores.",
+                "success_title": "Éxito", "success_message": "Resultados descargados correctamente."
+            },
+            "en": {
+                "title": "Pokémon Card Grader Tool", "load": "Load Image", "results": "Results",
+                "left": "Left", "right": "Right", "top": "Top", "bottom": "Bottom",
+                "h_symmetry": "Horizontal Symmetry", "v_symmetry": "Vertical Symmetry", "grade": "Estimated PSA Grade",
+                "info_title": "Information",
+                "info": "This application evaluates the centering of Pokémon cards to estimate their PSA grade.\n\n1. Load an image using the 'Load Image' button.\n2. Adjust the red and blue cursors to mark the edges of the illustration.\n3. Adjust the black cursors to define the card's frame.\n4. The results display the centering percentages and the estimated PSA grade.",
+                "warning_title": "Warning", "warning_message": "First load an image and adjust the cursors.",
+                "success_title": "Success", "success_message": "Results downloaded successfully."
+            },
+            "fr": {
+                "title": "Pokémon Card Grader Tool", "load": "Charger Image", "results": "Résultats",
+                "left": "Gauche", "right": "Droite", "top": "Haut", "bottom": "Bas",
+                "h_symmetry": "Symétrie Horizontale", "v_symmetry": "Symétrie Verticale", "grade": "Grade PSA Estimé",
+                "info_title": "Information",
+                "info": "Cette application évalue le centrage des cartes Pokémon pour estimer leur grade PSA.\n\n1. Chargez une image avec le bouton 'Charger Image'.\n2. Ajustez les curseurs rouges et bleus pour marquer les bords de l'illustration.\n3. Ajustez les curseurs noirs pour définir le cadre de la carte.\n4. Les résultats affichent les pourcentages de centrage et le grade PSA estimé.",
+                "warning_title": "Avertissement", "warning_message": "Chargez d'abord une image et ajustez les curseurs.",
+                "success_title": "Succès", "success_message": "Résultats téléchargés avec succès."
+            },
+            "it": {
+                "title": "Pokémon Card Grader Tool", "load": "Carica Immagine", "results": "Risultati",
+                "left": "Sinistra", "right": "Destra", "top": "Superiore", "bottom": "Inferiore",
+                "h_symmetry": "Simmetria Orizzontale", "v_symmetry": "Simmetria Verticale", "grade": "Grado PSA Stimato",
+                "info_title": "Informazione",
+                "info": "Questa applicazione valuta il centramento delle carte Pokémon per stimare il loro grado PSA.\n\n1. Carica un'immagine usando il pulsante 'Carica Immagine'.\n2. Regola i cursori rossi e blu per segnare i bordi dell'illustrazione.\n3. Regola i cursori neri per definire il riquadro della carta.\n4. I risultati mostrano le percentuali di centramento e il grado PSA stimato.",
+                "warning_title": "Avvertimento", "warning_message": "Prima carica un'immagine e regola i cursori.",
+                "success_title": "Successo", "success_message": "Risultati scaricati con successo."
+            },
+            "de": {
+                "title": "Pokémon Card Grader Tool", "load": "Bild Laden", "results": "Ergebnisse",
+                "left": "Links", "right": "Rechts", "top": "Oben", "bottom": "Unten",
+                "h_symmetry": "Horizontale Symmetrie", "v_symmetry": "Vertikale Symmetrie", "grade": "Geschätzte PSA-Note",
+                "info_title": "Information",
+                "info": "Diese Anwendung bewertet die Zentrierung von Pokémon-Karten, um ihre PSA-Note zu schätzen.\n\n1. Laden Sie ein Bild mit dem Button 'Bild Laden'.\n2. Passen Sie die roten und blauen Cursor an, um die Ränder der Illustration zu markieren.\n3. Passen Sie die schwarzen Cursor an, um den Rahmen der Karte zu definieren.\n4. Die Ergebnisse zeigen die Zentrierungsprozentsätze und die geschätzte PSA-Note.",
+                "warning_title": "Warnung", "warning_message": "Laden Sie zuerst ein Bild und passen Sie die Cursor an.",
+                "success_title": "Erfolg", "success_message": "Ergebnisse erfolgreich heruntergeladen."
+            }
+        };
+
+        let currentLang = "es";
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        let image = null;
+        let topY = 175, bottomY = 525, leftX = 175, rightX = 325; // Ajustado para el nuevo tamaño
+        let boxTopY = 75, boxBottomY = 625, boxLeftX = 75, boxRightX = 425; // Ajustado para el nuevo tamaño
+        let customVX = (boxLeftX + boxRightX) / 2, customHY = (boxTopY + boxBottomY) / 2;
+        let dragging = null;
+
+        // Actualizar texto según idioma
+        function updateLanguage() {
+            document.getElementById("title").textContent = translations[currentLang]["title"];
+            document.getElementById("load-btn").textContent = translations[currentLang]["load"];
+            document.getElementById("results-title").textContent = translations[currentLang]["results"];
+            document.getElementById("download-btn").textContent = currentLang === "en" ? "Download Results" : translations[currentLang]["load"].replace("Cargar", "Descargar").replace("Charger", "Télécharger").replace("Carica", "Scarica").replace("Bild Laden", "Ergebnisse Herunterladen");
+            document.getElementById("info-title").textContent = translations[currentLang]["info_title"];
+            document.getElementById("info-text").textContent = translations[currentLang]["info"];
+            calculateBorders();
+        }
+
+        // Cambiar idioma
+        document.querySelectorAll(".flag").forEach(btn => {
+            btn.addEventListener("click", () => {
+                currentLang = btn.dataset.lang;
+                document.querySelectorAll(".flag").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                updateLanguage();
+            });
+        });
+
+        // Cargar imagen
+        document.getElementById("load-btn").addEventListener("click", () => document.getElementById("file-input").click());
+        document.getElementById("file-input").addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const img = new Image();
+                img.onload = () => {
+                    image = img;
+                    drawCanvas();
+                };
+                img.src = URL.createObjectURL(file);
+            }
+        });
+
+        // Dibujar canvas
+        function drawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (image) {
+                ctx.drawImage(image, 0, 0, 500, 700); // Ajustado al nuevo tamaño
+            }
+            ctx.strokeStyle = "#EF4444"; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(0, topY); ctx.lineTo(500, topY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, bottomY); ctx.lineTo(500, bottomY); ctx.stroke();
+            ctx.strokeStyle = "#3B82F6";
+            ctx.beginPath(); ctx.moveTo(leftX, 0); ctx.lineTo(leftX, 700); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(rightX, 0); ctx.lineTo(rightX, 700); ctx.stroke();
+            ctx.strokeStyle = "black"; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(0, boxTopY); ctx.lineTo(500, boxTopY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, boxBottomY); ctx.lineTo(500, boxBottomY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(boxLeftX, 0); ctx.lineTo(boxLeftX, 700); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(boxRightX, 0); ctx.lineTo(boxRightX, 700); ctx.stroke();
+            ctx.strokeStyle = "#10B981"; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(customVX, 0); ctx.lineTo(customVX, 700); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, customHY); ctx.lineTo(500, customHY); ctx.stroke();
+        }
+
+        // Interacción con el canvas
+        canvas.addEventListener("mousedown", (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            dragging = null;
+            if (Math.abs(y - topY) < 10) dragging = "top";
+            else if (Math.abs(y - bottomY) < 10) dragging = "bottom";
+            else if (Math.abs(x - leftX) < 10) dragging = "left";
+            else if (Math.abs(x - rightX) < 10) dragging = "right";
+            else if (Math.abs(y - boxTopY) < 10) dragging = "boxTop";
+            else if (Math.abs(y - boxBottomY) < 10) dragging = "boxBottom";
+            else if (Math.abs(x - boxLeftX) < 10) dragging = "boxLeft";
+            else if (Math.abs(x - boxRightX) < 10) dragging = "boxRight";
+        });
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (dragging) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                if (dragging === "top" && y > 0 && y < bottomY - 10) topY = y;
+                else if (dragging === "bottom" && y > topY + 10 && y < 700) bottomY = y;
+                else if (dragging === "left" && x > 0 && x < rightX - 10) leftX = x;
+                else if (dragging === "right" && x > leftX + 10 && x < 500) rightX = x;
+                else if (dragging === "boxTop" && y > 0 && y < boxBottomY - 50) boxTopY = y;
+                else if (dragging === "boxBottom" && y > boxTopY + 50 && y < 700) boxBottomY = y;
+                else if (dragging === "boxLeft" && x > 0 && x < boxRightX - 50) boxLeftX = x;
+                else if (dragging === "boxRight" && x > boxLeftX + 50 && x < 500) boxRightX = x;
+                customVX = (boxLeftX + boxRightX) / 2;
+                customHY = (boxTopY + boxBottomY) / 2;
+                drawCanvas();
+                calculateBorders();
+            }
+        });
+
+        canvas.addEventListener("mouseup", () => dragging = null);
+
+        // Calcular bordes
+        function calculateBorders() {
+            const boxWidth = boxRightX - boxLeftX;
+            const boxHeight = boxBottomY - boxTopY;
+            if (boxWidth <= 0 || boxHeight <= 0) {
+                document.getElementById("results-text").textContent = "Error: Recuadro inválido";
+                return;
+            }
+
+            const leftMargin = Math.max(0, (leftX - boxLeftX) / boxWidth * 100);
+            const rightMargin = Math.max(0, (boxRightX - rightX) / boxWidth * 100);
+            const topMargin = Math.max(0, (topY - boxTopY) / boxHeight * 100);
+            const bottomMargin = Math.max(0, (boxBottomY - bottomY) / boxHeight * 100);
+
+            const hTotal = leftMargin + rightMargin;
+            const vTotal = topMargin + bottomMargin;
+            const hSymmetry = hTotal > 0 ? 100 - (Math.abs(leftMargin - rightMargin) / hTotal * 100) : 100;
+            const vSymmetry = vTotal > 0 ? 100 - (Math.abs(topMargin - bottomMargin) / vTotal * 100) : 100;
+
+            const psaGrade = estimatePSAGrade(leftMargin, rightMargin, topMargin, bottomMargin);
+
+            const resultText = `${translations[currentLang]["left"]}: ${leftMargin.toFixed(1)}%\n` +
+                              `${translations[currentLang]["right"]}: ${rightMargin.toFixed(1)}%\n` +
+                              `${translations[currentLang]["h_symmetry"]}: ${hSymmetry.toFixed(1)}%\n` +
+                              `\n` +
+                              `${translations[currentLang]["top"]}: ${topMargin.toFixed(1)}%\n` +
+                              `${translations[currentLang]["bottom"]}: ${bottomMargin.toFixed(1)}%\n` +
+                              `${translations[currentLang]["v_symmetry"]}: ${vSymmetry.toFixed(1)}%\n` +
+                              `\n` +
+                              `${translations[currentLang]["grade"]}: ${psaGrade}`;
+            document.getElementById("results-text").textContent = resultText;
+            canvas.dataset.results = resultText; // Guardar resultados para descarga
+        }
+
+        // Estimar grado PSA
+        function estimatePSAGrade(leftMargin, rightMargin, topMargin, bottomMargin) {
+            const hTotal = leftMargin + rightMargin;
+            const vTotal = topMargin + bottomMargin;
+            if (hTotal === 0 || vTotal === 0) return "No calculable";
+            const hDiff = Math.abs(leftMargin - rightMargin) / hTotal * 100;
+            const vDiff = Math.abs(topMargin - bottomMargin) / vTotal * 100;
+            const maxDiff = Math.max(hDiff, vDiff);
+            if (maxDiff <= 5) return "10";
+            if (maxDiff <= 10) return "9";
+            if (maxDiff <= 20) return "8";
+            if (maxDiff <= 30) return "7";
+            if (maxDiff <= 40) return "6";
+            return "5 o inferior";
+        }
+
+        // Descargar resultados
+        document.getElementById("download-btn").addEventListener("click", () => {
+            if (!image) {
+                alert(`${translations[currentLang]["warning_title"]}: ${translations[currentLang]["warning_message"]}`);
+                return;
+            }
+
+            const tempCanvas = document.createElement("canvas");
+            tempCanvas.width = 900; // Ajustado para el canvas más pequeño
+            tempCanvas.height = 700;
+            const tempCtx = tempCanvas.getContext("2d");
+
+            tempCtx.fillStyle = "#1F2937";
+            tempCtx.fillRect(0, 0, 900, 700);
+            tempCtx.drawImage(canvas, 0, 0);
+            tempCtx.fillStyle = "#374151";
+            tempCtx.fillRect(510, 10, 380, 680); // Ajustado para el nuevo tamaño
+            tempCtx.fillStyle = "#60A5FA";
+            tempCtx.font = "20px Arial";
+            tempCtx.fillText(translations[currentLang]["results"], 520, 40);
+            tempCtx.fillStyle = "#D1D5DB";
+            tempCtx.font = "16px Arial"; // Tamaño consistente con el texto en pantalla
+            const lines = canvas.dataset.results.split("\n");
+            lines.forEach((line, i) => tempCtx.fillText(line, 520, 70 + i * 20));
+
+            const link = document.createElement("a");
+            link.download = "pokemon_card_results.png";
+            link.href = tempCanvas.toDataURL("image/png");
+            link.click();
+            alert(`${translations[currentLang]["success_title"]}: ${translations[currentLang]["success_message"]}`);
+        });
+
+        // Modal de información
+        const modal = document.getElementById("info-modal");
+        document.getElementById("info-btn").addEventListener("click", () => modal.style.display = "block");
+        document.getElementById("modal-close").addEventListener("click", () => modal.style.display = "none");
+        window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
+
+        // Inicializar
+        document.querySelector(".flag[data-lang='es']").classList.add("active");
+        updateLanguage();
+    </script>
+</body>
+</html>
