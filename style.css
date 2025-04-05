@@ -1,0 +1,231 @@
+body {
+    /*margin: 0;
+    padding: 0;
+    font-family: Helvetica, Arial, sans-serif;
+    background-color: #1F2937;
+    color: #D1D5DB;*/
+    margin: 0;
+    padding: 0;
+    font-family: Helvetica, Arial, sans-serif;
+    background-image: url('background2.jpg'); /* Imagen de fondo */
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo negro semitransparente */
+    background-blend-mode: overlay; /* Mezcla el color con la imagen */
+    background-size: cover; /* Cubre toda la pantalla */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que se repita */
+    color: #D1D5DB;
+}
+
+.main-container {
+    max-width: 900px; /* Ajustado para el canvas más pequeño */
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+}
+
+.info-btn {
+    background-color: #60A5FA;
+    color: #1F2937;
+    font-size: 16px;
+    font-weight: bold;
+    border: 2px solid #60A5FA;
+    border-radius: 5px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.info-btn:hover {
+    background-color: #3B82F6;
+}
+
+.flags {
+    display: flex;
+    gap: 5px;
+}
+
+.flag {
+    background-color: #1F2937;
+    border: none;
+    padding: 2px; /* Reducido para ajustar el tamaño */
+    cursor: pointer;
+    width: 32px; /* Tamaño más pequeño para el botón */
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px; /* Bordes redondeados para que se vea mejor */
+}
+
+.flag img {
+    width: 28px; /* Tamaño pequeño para las imágenes */
+    height: 20px;
+    display: block; /* Evita espacios extra debajo de la imagen */
+    align-items: center;
+}
+
+.flag.active {
+    background-color: #60A5FA;
+    color: #1F2937;
+}
+
+h1 {
+    text-align: center;
+    color: #60A5FA;
+    font-size: 28px;
+    font-weight: bold;
+    padding: 15px 0;
+    text-transform: uppercase; /* Texto en mayúsculas */
+    font-family: 'verdana', sans-serif; /* Cambiado a Verdana */
+}
+
+.content {
+    display: flex;
+    gap: 20px;
+}
+
+.left-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.canvas-container {
+    background-color: #2D3748;
+    padding: 2px;
+    border-radius: 5px;
+}
+
+#canvas {
+    background-color: #4B5563;
+    border: 2px solid #374151;
+}
+
+.load-btn {
+    background-color: #60A5FA;
+    color: #1F2937;
+    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    margin-top: 15px;
+    margin-bottom: 150px;
+    cursor: pointer;
+}
+
+.load-btn:hover {
+    background-color: #3B82F6;
+}
+
+.right-panel {
+    padding: 2px;
+    border-radius: 5px;
+    flex-grow: 1;
+    max-height: 325px;
+    overflow-y: auto;
+    --flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    color: #60A5FA;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 5px 0;
+}
+
+.results-container {
+    background-color: #2D3748;
+    padding: 2px;
+    border-radius: 5px;
+    flex-grow: 1;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#results-text {
+    background-color: #374151;
+    padding: 15px;
+    margin: 0;
+    font-size: 16px; /* Letras más grandes */
+    white-space: pre-wrap;
+}
+
+.download-btn {
+    background-color: #60A5FA;
+    color: #1F2937;
+    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.download-btn:hover {
+    background-color: #3B82F6;
+}
+
+footer {
+    text-align: center;
+    color: #6B7280;
+    font-size: 16px;
+    font-style: italic;
+    padding: 5px 0;
+}
+
+footer a {
+    color: #f752e9; /* Cambia el color del enlace a un color personalizado (ej. rojo) */
+  }
+  
+  footer a:hover {
+    color: #0077FF; /* Cambia el color del enlace cuando el cursor pase por encima (hover) */
+  }
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #1F2937;
+    margin: 15% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #D1D5DB;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    color: #60A5FA;
+    font-size: 16px;
+}
+
+.modal-content p {
+    font-size: 12px;
+    white-space: pre-wrap;
+}
